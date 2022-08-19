@@ -23,15 +23,15 @@
 <meta property="og:site_name" content="hwollin">
 <meta property="og:description" content="Java层面探究Java中的原子类Atomic底层的实现原理是CAS，本文就让我们一起来深入探究CAS。下面是AtomicInteger的测试代码 ，执行完毕后会发现原子类实例ai最终是精确的10000，而普通变量bi的值是一个小于10000的不固定的值。 12345678910111213141516171819202122232425262728293031323334353637383940">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hwollin.github.io/layout.png">
+<meta property="og:image" content="https://hwollin.github.io/2022/08/19/cas/layout.png">
 <meta property="article:published_time" content="2022-08-18T19:25:10.000Z">
-<meta property="article:modified_time" content="2022-08-19T19:32:44.974Z">
+<meta property="article:modified_time" content="2022-08-19T19:40:03.136Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="C&#x2F;C++">
 <meta property="article:tag" content="Assembly">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hwollin.github.io/layout.png">
+<meta name="twitter:image" content="https://hwollin.github.io/2022/08/19/cas/layout.png">
   
   
   
@@ -260,7 +260,9 @@
 <p>上述代码的核心是AtomicInteger的addAndGet方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> value;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> valueOffset;<br>    <br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Atomically adds the given value to the current value.</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> delta the value to add</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> the updated value</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">addAndGet</span><span class="hljs-params">(<span class="hljs-type">int</span> delta)</span> &#123;<br>    <span class="hljs-keyword">return</span> unsafe.getAndAddInt(<span class="hljs-built_in">this</span>, valueOffset, delta) + delta;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>首先我们看一下AtomicInteger类实例对象的内存布局<br><img src="/layout.png" srcset="/img/loading.gif" lazyload></p>
+<p>首先我们看一下AtomicInteger类实例对象的内存布局</p>
+<img src="/2022/08/19/cas/layout.png" srcset="/img/loading.gif" lazyload class="">
+
 <p>this指向了对象的起始地址，通过this+valueOffset(&#x3D;12)我们就可以获得value字段的内存地址（即C&#x2F;C++中的指向value的指针），进而读写该value值。</p>
 <p>接下来我们接着看unsafe类的getAndAddInt方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//                             原子实例ai  valueOffset  delta(增量)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getAndAddInt</span><span class="hljs-params">(Object var1, <span class="hljs-type">long</span> var2, <span class="hljs-type">int</span> var4)</span> &#123;<br>    <span class="hljs-type">int</span> var5;<br>    <span class="hljs-keyword">do</span> &#123;<br>        var5 = <span class="hljs-built_in">this</span>.getIntVolatile(var1, var2); <span class="hljs-comment">// var5: oldValue</span><br>    &#125; <span class="hljs-keyword">while</span>(!<span class="hljs-built_in">this</span>.compareAndSwapInt(var1, var2, var5, var5 + var4)); <span class="hljs-comment">// var5 + var4: updateValue</span><br> <br>    <span class="hljs-keyword">return</span> var5;<br>&#125;<br></code></pre></td></tr></table></figure>
