@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hwollin.github.io/2022/08/19/cas/layout.png">
 <meta property="article:published_time" content="2022-08-18T19:25:10.000Z">
-<meta property="article:modified_time" content="2022-08-19T20:54:12.846Z">
+<meta property="article:modified_time" content="2022-08-20T08:39:03.749Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="C&#x2F;C++">
@@ -301,9 +301,8 @@
 <p><code>&quot;=a&quot;(resValue)</code>：表示内联汇编执行完后，将EAX寄存器的值存到<code>resValue</code>这个变量中。</p>
 <p>我们在输出列表和输入列表中声明了许多变量，这些变量从<code>%0</code>开始依次往下标号，所以<code>%0</code>表示<code>resValue</code>，<code>%1</code>代表了<span class="label label-primary">oldValue</span>，<code>%2</code>代表了<span class="label label-info">updateValue</span>，<code>%3</code>代表了<code>addr</code>。</p>
 <p>现在我们结合的<code>cmpxchg</code>指令的功能，来理解一下这段汇编到底在做什么。汇编语言有Intel和AT&amp;T两种语法，一般我们用的都是AT&amp;T这种，下面的讲解也是基于该语法的:</p>
-<blockquote>
-<p>cmpxchg 指令有两个操作数， 同时还使用了 EAX 寄存器。 首先，它将第二个操作数（目的操作数）和 EAX 寄存器相比较， 如果相同则把第一个操作数（源操作数）赋值给第二个操作数，否则将第一个操作数赋值给 EAX 寄存器</p>
-</blockquote>
+<p class="note note-info">cmpxchg 指令有两个操作数，同时还使用了EAX 寄存器。首先，它将第二个操作数和EAX寄存器相比较，如果相同则把第一个操作数赋值给第二个操作数，否则将第一个操作数赋值给EAX 寄存器</p>
+
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">cmpxchgl %2, (%3) <br></code></pre></td></tr></table></figure>
 
 <p><code>%2</code>是第一个操作数，即<span class="label label-info">updateValue</span>，也就是无冲突的时候我们期望更新的值</p>
