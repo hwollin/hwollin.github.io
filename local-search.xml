@@ -4,13 +4,29 @@
   
   
   <entry>
-    <title>ipc</title>
+    <title>进程间通信机制介绍</title>
     <link href="/2022/09/06/ipc/"/>
     <url>/2022/09/06/ipc/</url>
     
-    <content type="html"><![CDATA[]]></content>
+    <content type="html"><![CDATA[<h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><h3 id="通信方式"><a href="#通信方式" class="headerlink" title="通信方式"></a>通信方式</h3><ul><li>管道</li><li>命名管道</li><li>信号</li><li>信号量</li><li>共享内存<ul><li>内存映射文件</li></ul></li><li>消息队列</li><li>Socket</li></ul><h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3>]]></content>
     
     
+    <categories>
+      
+      <category>OS</category>
+      
+      <category>进程</category>
+      
+      <category>IPC</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Linux</tag>
+      
+    </tags>
     
   </entry>
   
