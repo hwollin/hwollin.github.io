@@ -16,22 +16,23 @@
   <meta name="author" content="Wei Han">
   <meta name="keywords" content="">
   
-    <meta name="description" content="介绍了进程间通信的基本原理及常见方式">
+    <meta name="description" content="首先对管道进行了基本介绍和应用，然后从内核源码层面对管道机制进行剖析，并使用动画展示了管道通信的过程，最后介绍了shell中的管道是如何实现的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="进程间通信机制(IPC)简介">
-<meta property="og:url" content="https://hwollin.github.io/2022/09/06/ipc/index.html">
+<meta property="og:title" content="进程间通信之管道">
+<meta property="og:url" content="https://hwollin.github.io/2022/09/07/ipc-pipe/index.html">
 <meta property="og:site_name" content="hwollin">
-<meta property="og:description" content="介绍了进程间通信的基本原理及常见方式">
+<meta property="og:description" content="首先对管道进行了基本介绍和应用，然后从内核源码层面对管道机制进行剖析，并使用动画展示了管道通信的过程，最后介绍了shell中的管道是如何实现的">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-09-05T22:46:30.000Z">
-<meta property="article:modified_time" content="2022-09-07T10:00:31.281Z">
+<meta property="article:published_time" content="2022-09-06T23:31:43.000Z">
+<meta property="article:modified_time" content="2022-09-07T10:28:56.585Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Shell">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>进程间通信机制(IPC)简介 - hwollin</title>
+  <title>进程间通信之管道 - hwollin</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="进程间通信机制(IPC)简介"></span>
+            <span id="subtitle" data-typed-text="进程间通信之管道"></span>
           
         </div>
 
@@ -249,22 +250,34 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">进程间通信机制(IPC)简介</h1>
+            <h1 style="display: none">进程间通信之管道</h1>
             
             
               <div class="markdown-body">
                 
-                <h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><h3 id="通信方式"><a href="#通信方式" class="headerlink" title="通信方式"></a>通信方式</h3><ul>
-<li><a href="https://hwollin.github.io/2022/09/07/ipc-pipe/">管道(pipe)</a></li>
-<li><a href="">命名管道(fifo &#x2F; named pipe)</a></li>
-<li><a href="">信号(signal)</a></li>
-<li><a href="">信号量(semaphore)</a></li>
-<li><a href="">消息队列(message queue)</a></li>
-<li><a href="">共享内存(shared memory)</a></li>
-<li><a href="">内存映射(memory map)</a></li>
-<li><a href="">套接字(socket)</a></li>
-</ul>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3>
+                <h3 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h3><h4 id="API"><a href="#API" class="headerlink" title="API"></a>API</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">pipe</span><span class="hljs-params">(<span class="hljs-type">int</span> pipefd[<span class="hljs-number">2</span>])</span>;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> _GNU_SOURCE </span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">pipe2</span><span class="hljs-params">(<span class="hljs-type">int</span> pipefd[<span class="hljs-number">2</span>], <span class="hljs-type">int</span> flags)</span>;  <span class="hljs-comment">// flags = 0时，等同于pipe()</span><br></code></pre></td></tr></table></figure>
+
+<p>若对pipe2接口感兴趣请参考pipe manual page<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="[pipe Manual Page](https://man7.org/linux/man-pages/man2/pipe.2.html)">[1]</span></a></sup></p>
+<h4 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h4><p>单向，一般用于父子进程间通信，通信双方中的一方向pipefd[1]中写入数据，另一方从pipefd[0]中读出数据</p>
+<p>&lt;unistd.h&gt;</p>
+<blockquote>
+<p>Create a one-way communication channel (pipe). If successful, two file descriptors are stored in pipefd[2]; bytes written on pipefd[1] can be read from pipefd[0]. </p>
+</blockquote>
+<p>pipe manual page</p>
+<blockquote>
+<p>pipe()  creates  a pipe, a unidirectional data channel that can be used for interprocess communication.  The array pipefd is used to return two file  descriptors  referring to the ends of the pipe.  pipefd[0] refers to the read end of the pipe.  pipefd[1] refers to the write end of  the pipe.   Data  written  to  the write end of the pipe is buffered by the kernel until it is read from the read end of the pipe</p>
+</blockquote>
+<h4 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ctype.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/wait.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MAX_LEN 64</span><br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * loop:</span><br><span class="hljs-comment"> *     父进程从stdin读取字符串(以换行符结束)，通过管道发送给子进程，子进程</span><br><span class="hljs-comment"> *     将收到的字符串转换为大写然后输出到stdout。</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * 当父进程读取的字符串为&quot;\n&quot;时，程序结束。</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 父进程创建管道，创建完成后会返回两个文件描述符存储到pipefd中。</span><br><span class="hljs-comment">     * pipefd[1]用于写，pipefd[0]用于读</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * 管道是单向的，只能一个进程写，一个进程读</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">int</span> pipefd[<span class="hljs-number">2</span>];<br>    pipe(pipefd);<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 创建子进程，子进程会继承父进程的资源，包括pipefd</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">int</span> cpid = fork();<br><br>    <span class="hljs-keyword">if</span> (cpid == <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// 子进程</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 关闭无用文件描述符，子进程是读端，仅用到了pipefd[0]</span><br><span class="hljs-comment">         */</span><br>        close(pipefd[<span class="hljs-number">1</span>]);<br><br>        <span class="hljs-type">char</span> recv_buf[MAX_LEN] = &#123;<span class="hljs-string">&#x27;\0&#x27;</span>&#125;;<br><br>        <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) &#123;<br>            <span class="hljs-comment">// 从管道读取数据</span><br>            read(pipefd[<span class="hljs-number">0</span>], recv_buf, MAX_LEN);<br><br>            <span class="hljs-comment">// 读取到的字符串为&quot;\n&quot;时，程序退出</span><br>            <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strlen</span>(recv_buf) == <span class="hljs-number">1</span>) &#123;<br>                close(pipefd[<span class="hljs-number">0</span>]); <span class="hljs-comment">// 关闭资源</span><br>                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;child process -&gt; exit.\n&quot;</span>);<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>            &#125;<br><br>            <span class="hljs-comment">// 将读取到的字符串转换为大写</span><br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">strlen</span>(recv_buf); i++) &#123;<br>                recv_buf[i] = <span class="hljs-built_in">toupper</span>(recv_buf[i]);<br>            &#125;<br><br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;child process -&gt; recv: %s&quot;</span>, recv_buf);<br><br>            <span class="hljs-comment">// 清空缓冲区，用于下次从管道读取</span><br>            bzero(recv_buf, MAX_LEN);<br>        &#125;<br><br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 父进程</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 关闭无用文件描述符，父进程是写端，仅用到了pipefd[1]</span><br><span class="hljs-comment">         */</span><br>        close(pipefd[<span class="hljs-number">0</span>]);<br><br>        <span class="hljs-type">char</span> send_buf[MAX_LEN] = &#123;<span class="hljs-string">&#x27;\0&#x27;</span>&#125;;<br><br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;parent process -&gt; please input msg:\n&quot;</span>);<br><br>        <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) &#123;<br>            <span class="hljs-comment">// 从命令行读取字符串，以换行符结束</span><br>            fgets(send_buf, MAX_LEN, <span class="hljs-built_in">stdin</span>);<br><br>            <span class="hljs-comment">// 将字符串写入管道</span><br>            write(pipefd[<span class="hljs-number">1</span>], send_buf, MAX_LEN);<br><br>            <span class="hljs-comment">// 读取到的字符串为&quot;\n&quot;时，程序退出</span><br>            <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strlen</span>(send_buf) == <span class="hljs-number">1</span>) &#123;<br>                close(pipefd[<span class="hljs-number">1</span>]); <span class="hljs-comment">// 关闭资源</span><br>                wait(<span class="hljs-literal">NULL</span>); <span class="hljs-comment">// 等待子进程退出</span><br>                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;parent process -&gt; exit.\n&quot;</span>);<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>            &#125;<br><br>            <span class="hljs-comment">// 清空缓冲区，用于下次从命令行读取</span><br>            bzero(send_buf, MAX_LEN);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="内核源码剖析"><a href="#内核源码剖析" class="headerlink" title="内核源码剖析"></a>内核源码剖析</h3><p>最新Linux内核源码请查看Github linux<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="[Github Linux](https://github.com/torvalds/linux)">[2]</span></a></sup></p>
+<p>TODO</p>
+<h3 id="动画展示"><a href="#动画展示" class="headerlink" title="动画展示"></a>动画展示</h3><p>TODO</p>
+<h3 id="shell中的管道"><a href="#shell中的管道" class="headerlink" title="shell中的管道"></a>shell中的管道</h3><p>TODO</p>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man2/pipe.2.html">pipe Manual Page</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li><li><span id="fn:2" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://github.com/torvalds/linux">Github Linux</a>
+<a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section>
                 
               </div>
             
@@ -313,6 +326,8 @@
       
         <a href="/tags/Linux/">#Linux</a>
       
+        <a href="/tags/Shell/">#Shell</a>
+      
     </div>
   
 </div>
@@ -323,8 +338,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>进程间通信机制(IPC)简介</div>
-      <div>https://hwollin.github.io/2022/09/06/ipc/</div>
+      <div>进程间通信之管道</div>
+      <div>https://hwollin.github.io/2022/09/07/ipc-pipe/</div>
     </div>
     <div class="license-meta">
       
@@ -336,7 +351,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年9月6日</div>
+          <div>2022年9月7日</div>
         </div>
       
       
@@ -366,18 +381,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/09/07/ipc-pipe/" title="进程间通信之管道">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">进程间通信之管道</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/08/19/cas/" title="深入理解CAS">
-                        <span class="hidden-mobile">深入理解CAS</span>
+                      <a href="/2022/09/06/ipc/" title="进程间通信机制(IPC)简介">
+                        <span class="hidden-mobile">进程间通信机制(IPC)简介</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
