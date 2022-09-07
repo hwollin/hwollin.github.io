@@ -24,7 +24,7 @@
 <meta property="og:description" content="首先对管道进行了基本介绍和应用，然后从内核源码层面对管道机制进行剖析，并使用动画展示了管道通信的过程，最后介绍了shell中的管道是如何实现的">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-06T23:31:43.000Z">
-<meta property="article:modified_time" content="2022-09-07T10:28:56.585Z">
+<meta property="article:modified_time" content="2022-09-07T17:29:42.599Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Shell">
@@ -258,7 +258,10 @@
                 <h3 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h3><h4 id="API"><a href="#API" class="headerlink" title="API"></a>API</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">pipe</span><span class="hljs-params">(<span class="hljs-type">int</span> pipefd[<span class="hljs-number">2</span>])</span>;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> _GNU_SOURCE </span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">pipe2</span><span class="hljs-params">(<span class="hljs-type">int</span> pipefd[<span class="hljs-number">2</span>], <span class="hljs-type">int</span> flags)</span>;  <span class="hljs-comment">// flags = 0时，等同于pipe()</span><br></code></pre></td></tr></table></figure>
 
 <p>若对pipe2接口感兴趣请参考pipe manual page<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="[pipe Manual Page](https://man7.org/linux/man-pages/man2/pipe.2.html)">[1]</span></a></sup></p>
-<h4 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h4><p>单向，一般用于父子进程间通信，通信双方中的一方向pipefd[1]中写入数据，另一方从pipefd[0]中读出数据</p>
+<h4 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h4><p>单向，一般用于<span class="label label-danger">具有血缘关系的进程</span>间通信，通信双方中的一方向pipefd[1]中写入数据，另一方从pipefd[0]中读出数据</p>
+<p class="note note-danger">如何理解这里描述的"具有血缘关系的进程"呢？</p>
+<p class="note note-info">进程Parent创建了管道，进程Parent的所有(直接/非直接)子进程Childs都可以访问该管道，即该管道可用于{Parent + Childs}中的进程间通信。</p>
+
 <p>&lt;unistd.h&gt;</p>
 <blockquote>
 <p>Create a one-way communication channel (pipe). If successful, two file descriptors are stored in pipefd[2]; bytes written on pipefd[1] can be read from pipefd[0]. </p>
