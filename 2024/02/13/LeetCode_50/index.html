@@ -16,24 +16,25 @@
   <meta name="author" content="Wei Han">
   <meta name="keywords" content="">
   
-    <meta name="description" content="使用 有限状态机(Finite State Machine，FSM) 实现字符串到整数的转换">
+    <meta name="description" content="分别使用 递归 和 迭代 两种方式解决该问题。该题目最大的问题在于普通循环的 超时，因此需要使用 快速幂算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LeetCode 8 字符串转换整数 (atoi)">
-<meta property="og:url" content="https://hwollin.github.io/2024/02/07/LeetCode_8/index.html">
+<meta property="og:title" content="LeetCode 50 Pow(x, n)">
+<meta property="og:url" content="https://hwollin.github.io/2024/02/13/LeetCode_50/index.html">
 <meta property="og:site_name" content="hwollin">
-<meta property="og:description" content="使用 有限状态机(Finite State Machine，FSM) 实现字符串到整数的转换">
+<meta property="og:description" content="分别使用 递归 和 迭代 两种方式解决该问题。该题目最大的问题在于普通循环的 超时，因此需要使用 快速幂算法">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-02-06T18:45:31.000Z">
-<meta property="article:modified_time" content="2024-02-06T19:08:33.067Z">
+<meta property="article:published_time" content="2024-02-13T10:02:10.000Z">
+<meta property="article:modified_time" content="2024-02-13T11:03:09.567Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="LeetCode">
-<meta property="article:tag" content="State Machine">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Bit Manipulation">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>LeetCode 8 字符串转换整数 (atoi) - hwollin</title>
+  <title>LeetCode 50 Pow(x, n) - hwollin</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="LeetCode 8 字符串转换整数 (atoi)"></span>
+            <span id="subtitle" data-typed-text="LeetCode 50 Pow(x, n)"></span>
           
         </div>
 
@@ -251,61 +252,61 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">LeetCode 8 字符串转换整数 (atoi)</h1>
+            <h1 style="display: none">LeetCode 50 Pow(x, n)</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="1-问题描述-1"><a href="#1-问题描述-1" class="headerlink" title="1 问题描述[1]"></a><span class="label label-primary">1 问题描述<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="[LeetCode 8. 字符串转换整数 (atoi)](https://leetcode.cn/problems/string-to-integer-atoi/)">[1]</span></a></sup></span></h2><p>请你来实现一个 <code>myAtoi(string s)</code> 函数，使其能将字符串转换成一个 32 位有符号整数（类似 C&#x2F;C++ 中的 <code>atoi</code> 函数）。</p>
-<p>函数 <code>myAtoi(string s)</code> 的算法如下：</p>
-<ol>
-<li>读入字符串并丢弃无用的前导空格</li>
-<li>检查下一个字符（假设还未到字符末尾）为正还是负号，读取该字符（如果有）。 确定最终结果是负数还是正数。 如果两者都不存在，则假定结果为正。</li>
-<li>读入下一个字符，直到到达下一个非数字字符或到达输入的结尾。字符串的其余部分将被忽略。</li>
-<li>将前面步骤读入的这些数字转换为整数（即，”123” -&gt; 123， “0032” -&gt; 32）。如果没有读入数字，则整数为 <code>0</code> 。必要时更改符号（从步骤 2 开始）。</li>
-<li>如果整数数超过 32 位有符号整数范围 <code>[−231, 231 − 1]</code> ，需要截断这个整数，使其保持在这个范围内。具体来说，小于 <code>−231</code> 的整数应该被固定为 <code>−231</code> ，大于 <code>231 − 1</code> 的整数应该被固定为 <code>231 − 1</code> 。</li>
-<li>返回整数作为最终结果。</li>
-</ol>
-<p><strong>注意：</strong></p>
+                <h2 id="1-问题描述-1"><a href="#1-问题描述-1" class="headerlink" title="1 问题描述[1]"></a><span class="label label-primary">1 问题描述<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="[LeetCode 50. Pow(x, n)](https://leetcode.cn/problems/powx-n/description/)">[1]</span></a></sup></span></h2><p>Implement <a target="_blank" rel="noopener" href="http://www.cplusplus.com/reference/valarray/pow/">pow(x, n)</a>, which calculates <code>x</code> raised to the power <code>n</code> (i.e., <code>x^n</code>).</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Input</span>: x = <span class="hljs-number">2</span>.<span class="hljs-number">00000</span>, n = <span class="hljs-number">10</span><br><span class="hljs-attribute">Output</span>: <span class="hljs-number">1024</span>.<span class="hljs-number">00000</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Input</span>: x = <span class="hljs-number">2</span>.<span class="hljs-number">10000</span>, n = <span class="hljs-number">3</span><br><span class="hljs-attribute">Output</span>: <span class="hljs-number">9</span>.<span class="hljs-number">26100</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>Example 3:</strong></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Input</span>: x = <span class="hljs-number">2</span>.<span class="hljs-number">00000</span>, n = -<span class="hljs-number">2</span><br><span class="hljs-attribute">Output</span>: <span class="hljs-number">0</span>.<span class="hljs-number">25000</span><br><span class="hljs-attribute">Explanation</span>: <span class="hljs-number">2</span>-<span class="hljs-number">2</span> = <span class="hljs-number">1</span>/<span class="hljs-number">22</span> = <span class="hljs-number">1</span>/<span class="hljs-number">4</span> = <span class="hljs-number">0</span>.<span class="hljs-number">25</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>出错用例:</strong></p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs excel">当<span class="hljs-built_in">n</span>很大时，如果使用普通的for循环会超时<br>x = <span class="hljs-number">2.0</span>, <span class="hljs-built_in">n</span> = -<span class="hljs-number">2147483648</span><br>x = -<span class="hljs-number">1</span>, <span class="hljs-built_in">n</span> = <span class="hljs-number">2147483647</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>Constraints:</strong></p>
 <ul>
-<li>本题中的空白字符只包括空格字符 <code>&#39; &#39;</code> 。</li>
-<li>除前导空格或数字后的其余字符串外，<strong>请勿忽略</strong> 任何其他字符。</li>
+<li><code>-100.0 &lt; x &lt; 100.0</code></li>
+<li><code>-2^31 &lt;= n &lt;= 2^31-1</code></li>
+<li><code>n</code> is an integer.</li>
+<li>Either <code>x</code> is not zero or <code>n &gt; 0</code>.</li>
+<li><code>-10^4 &lt;= x^n &lt;= 10^4</code></li>
 </ul>
-<p><strong>示例 1：</strong></p>
-<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs prolog">输入：s = <span class="hljs-string">&quot;42&quot;</span><br>输出：<span class="hljs-number">42</span><br>解释：加粗的字符串为已经读入的字符，插入符号是当前读取的字符。<br>第 <span class="hljs-number">1</span> 步：<span class="hljs-string">&quot;42&quot;</span>（当前没有读入字符，因为没有前导空格）<br>         ^<br>第 <span class="hljs-number">2</span> 步：<span class="hljs-string">&quot;42&quot;</span>（当前没有读入字符，因为这里不存在 <span class="hljs-string">&#x27;-&#x27;</span> 或者 <span class="hljs-string">&#x27;+&#x27;</span>）<br>         ^<br>第 <span class="hljs-number">3</span> 步：<span class="hljs-string">&quot;42&quot;</span>（读入 <span class="hljs-string">&quot;42&quot;</span>）<br>           ^<br>解析得到整数 <span class="hljs-number">42</span> 。<br>由于 <span class="hljs-string">&quot;42&quot;</span> 在范围 [<span class="hljs-number">-231</span>, <span class="hljs-number">231</span> - <span class="hljs-number">1</span>] 内，最终结果为 <span class="hljs-number">42</span> 。<br></code></pre></td></tr></table></figure>
-
-<p><strong>示例 2：</strong></p>
-<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs subunit">输入：s = &quot;   <span class="hljs-string">-42</span>&quot;<br>输出：<span class="hljs-string">-42</span><br>解释：<br>第 1 步：&quot;   <span class="hljs-string">-42</span>&quot;（读入前导空格，但忽视掉）<br>            ^<br>第 2 步：&quot;   <span class="hljs-string">-42</span>&quot;（读入 &#x27;-&#x27; 字符，所以结果应该是负数）<br>             ^<br>第 3 步：&quot;   <span class="hljs-string">-42</span>&quot;（读入 &quot;42&quot;）<br>               ^<br>解析得到整数 <span class="hljs-string">-42</span> 。<br>由于 &quot;<span class="hljs-string">-42</span>&quot; 在范围 [<span class="hljs-string">-231</span>, 231 - 1] 内，最终结果为 <span class="hljs-string">-42</span> 。<br></code></pre></td></tr></table></figure>
-
-<p><strong>示例 3：</strong></p>
-<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs prolog">输入：s = <span class="hljs-string">&quot;4193 with words&quot;</span><br>输出：<span class="hljs-number">4193</span><br>解释：<br>第 <span class="hljs-number">1</span> 步：<span class="hljs-string">&quot;4193 with words&quot;</span>（当前没有读入字符，因为没有前导空格）<br>         ^<br>第 <span class="hljs-number">2</span> 步：<span class="hljs-string">&quot;4193 with words&quot;</span>（当前没有读入字符，因为这里不存在 <span class="hljs-string">&#x27;-&#x27;</span> 或者 <span class="hljs-string">&#x27;+&#x27;</span>）<br>         ^<br>第 <span class="hljs-number">3</span> 步：<span class="hljs-string">&quot;4193 with words&quot;</span>（读入 <span class="hljs-string">&quot;4193&quot;</span>；由于下一个字符不是一个数字，所以读入停止）<br>             ^<br>解析得到整数 <span class="hljs-number">4193</span> 。<br>由于 <span class="hljs-string">&quot;4193&quot;</span> 在范围 [<span class="hljs-number">-231</span>, <span class="hljs-number">231</span> - <span class="hljs-number">1</span>] 内，最终结果为 <span class="hljs-number">4193</span> 。<br></code></pre></td></tr></table></figure>
-
-<p><strong>提示：</strong></p>
-<ul>
-<li><code>0 &lt;= s.length &lt;= 200</code></li>
-<li><code>s</code> 由英文字母（大写和小写）、数字（<code>0-9</code>）、<code>&#39; &#39;</code>、<code>&#39;+&#39;</code>、<code>&#39;-&#39;</code> 和 <code>&#39;.&#39;</code> 组成</li>
-</ul>
-<h2 id="2-Solution-Finite-State-Machine"><a href="#2-Solution-Finite-State-Machine" class="headerlink" title="2 Solution: Finite State Machine"></a><span class="label label-info">2 Solution: Finite State Machine</span></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">myAtoi</span>(<span class="hljs-params">self, s: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>        i, res, state, sign = <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span><br>        <br>        <span class="hljs-keyword">while</span> i &lt; <span class="hljs-built_in">len</span>(s):<br>            <span class="hljs-keyword">if</span> state == <span class="hljs-number">0</span>:<br>                <span class="hljs-comment"># ignore leading white space</span><br>                <span class="hljs-keyword">if</span> s[i] == <span class="hljs-string">&#x27; &#x27;</span>:<br>                    i += <span class="hljs-number">1</span><br>                <span class="hljs-keyword">elif</span> s[i] == <span class="hljs-string">&#x27;+&#x27;</span>:<br>                    i += <span class="hljs-number">1</span><br>                    state = <span class="hljs-number">1</span><br>                <span class="hljs-keyword">elif</span> s[i] == <span class="hljs-string">&#x27;-&#x27;</span>:<br>                    i += <span class="hljs-number">1</span><br>                    state = <span class="hljs-number">1</span><br>                    sign = -<span class="hljs-number">1</span><br>                <span class="hljs-comment"># s[i].isdigit()</span><br>                <span class="hljs-keyword">elif</span> s[i] &gt;= <span class="hljs-string">&#x27;0&#x27;</span> <span class="hljs-keyword">and</span> s[i] &lt;= <span class="hljs-string">&#x27;9&#x27;</span>:<br>                    state = <span class="hljs-number">1</span><br>                <span class="hljs-keyword">else</span>:<br>                    <span class="hljs-keyword">return</span> res<br>            <span class="hljs-keyword">elif</span> state == <span class="hljs-number">1</span>:<br>                <span class="hljs-keyword">if</span> s[i] &gt;= <span class="hljs-string">&#x27;0&#x27;</span> <span class="hljs-keyword">and</span> s[i] &lt;= <span class="hljs-string">&#x27;9&#x27;</span>:<br>                    res = res * <span class="hljs-number">10</span> + <span class="hljs-built_in">ord</span>(s[i]) - <span class="hljs-built_in">ord</span>(<span class="hljs-string">&#x27;0&#x27;</span>)<br>                    i += <span class="hljs-number">1</span><br>                    <br>                    <span class="hljs-comment"># 对于正数来说，已经越界；对于负数来说，虽然2**31没有越界，但是返回值同越界时相同</span><br>                    <span class="hljs-keyword">if</span> res &gt;= <span class="hljs-number">2</span>**<span class="hljs-number">31</span>:<br>                        <span class="hljs-keyword">break</span><br>                <span class="hljs-keyword">else</span>:<br>                    <span class="hljs-keyword">break</span><br><br>        res *= sign<br>        <span class="hljs-comment"># limit to the range of 32-bit integer values</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">max</span>(<span class="hljs-built_in">min</span>(res, <span class="hljs-number">2</span>**<span class="hljs-number">31</span> -<span class="hljs-number">1</span>), -<span class="hljs-number">2</span>**<span class="hljs-number">31</span>)<br></code></pre></td></tr></table></figure>
-
-<p>这段代码实现了将字符串转换为整数的功能，类似于 <code>int()</code> 函数的作用。主要是考虑了字符串可能包含的各种情况，包括正负号、空格等。以下是代码的解释：</p>
-<ol>
-<li><p><code>i, res, state, sign = 0, 0, 0, 1</code>: 初始化变量 <code>i</code>（索引）、<code>res</code>（结果）、<code>state</code>（状态）、<code>sign</code>（符号），开始时状态为0，符号为正。</p>
-</li>
-<li><p><code>while i &lt; len(s):</code>: 循环遍历字符串 <code>s</code>。</p>
-</li>
-<li><p>在 <code>state</code> 为0时，主要处理空格、正负号的情况，或者数字的开头。如果是空格，则继续往后移动；如果是正号或负号，则修改状态为1，并更新符号；如果是数字，则将状态改为1。</p>
-</li>
-<li><p>在 <code>state</code> 为1时，处理数字的情况。将数字字符转换为整数并加到结果 <code>res</code> 中，同时更新索引 <code>i</code>。检查是否越界，如果越界（超过32位整数的表示范围），则中断循环。</p>
-</li>
-<li><p>最后，乘以符号 <code>sign</code>，并限制结果在32位整数的范围内，即 <code>max(min(res, 2**31 -1), -2**31)</code>。</p>
-</li>
-</ol>
-<p>总体来说，这段代码通过 <strong>状态机(state machine)</strong> 的方式逐个字符处理输入字符串，确保提取出符合要求的整数，并防止越界。</p>
+<h2 id="2-Solution-Recursion"><a href="#2-Solution-Recursion" class="headerlink" title="2 Solution: Recursion"></a><span class="label label-info">2 Solution: Recursion</span></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">myPow</span>(<span class="hljs-params">self, x: <span class="hljs-built_in">float</span>, n: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">float</span>:<br>        <span class="hljs-comment"># base case</span><br>        <span class="hljs-keyword">if</span> n == <span class="hljs-number">0</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span><br>        <br>        <span class="hljs-comment"># 统一转换为正数次方处理</span><br>        <span class="hljs-keyword">if</span> n &lt; <span class="hljs-number">0</span>:<br>            x = <span class="hljs-number">1</span> / x<br>            n = -n<br>        <br>        <span class="hljs-keyword">if</span> n &amp; <span class="hljs-number">1</span> == <span class="hljs-number">0</span>:<br>            <span class="hljs-comment"># n为偶数时: x^n = (x^2)^(n&gt;&gt;1)</span><br>            <span class="hljs-keyword">return</span> self.myPow(x ** <span class="hljs-number">2</span>, n &gt;&gt; <span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-comment"># n为奇数时: x^n = x * x^(n-1)</span><br>            <span class="hljs-keyword">return</span> x * self.myPow(x, n - <span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
 <p class="note note-info">
-状态机（State Machine）是一种抽象的数学模型，用于描述对象在不同状态之间的转移以及在每个状态下对输入的响应。状态机通常用于建模和解决与状态相关的问题，如字符串匹配、编译器、自动控制系统等。
+Fast Power Algorithm（快速幂算法）是一种用于高效计算幂运算的算法。它利用了指数的二进制表示形式来降低计算复杂度。具体来说，对于指数为 n 的幂运算，传统的方法需要进行 n-1 次乘法操作，而快速幂算法只需要进行 O(log n) 次乘法操作。这种算法通常采用递归或迭代的方式实现，其基本思想是通过将指数 n 分解为二进制形式，然后利用乘法的结合性和交换性质来降低计算的复杂度。这使得快速幂算法在求解指数运算时具有较高的效率和性能。
 </p>
+这段代码是一个计算浮点数 x 的整数次幂的函数，采用了递归和分治的思想。以下是代码的解释和复杂度分析：
 
-<h2 id="3-引用"><a href="#3-引用" class="headerlink" title="3 引用"></a><span class="label label-warning">3 引用</span></h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/string-to-integer-atoi/">LeetCode 8. 字符串转换整数 (atoi)</a>
+<ol>
+<li><p><strong>基本情况处理：</strong> 如果 n 等于 0，直接返回 1.0，因为任何数的 0 次幂都是 1。</p>
+</li>
+<li><p><strong>统一转换为正数次方处理：</strong> 为了简化计算，将负数次方的情况转换为正数次方。将 x 变为 1&#x2F;x，同时将 n 变为 -n。</p>
+</li>
+<li><p><strong>判断 n 的奇偶性：</strong></p>
+<ul>
+<li>如果 n 是偶数，使用分治思想，将 x 的 n 次幂转化为 x 的平方的 n&#x2F;2 次幂。递归调用 <code>self.myPow(x ** 2, n &gt;&gt; 1)</code>。</li>
+<li>如果 n 是奇数，将 x 的 n 次幂转化为 x 乘以 x 的 n-1 次幂。递归调用 <code>x * self.myPow(x, n - 1)</code>。</li>
+</ul>
+</li>
+</ol>
+<p><strong>复杂度分析：</strong></p>
+<ul>
+<li>递归调用会在每一层将问题规模缩小一半（因为 n 右移一位相当于除以 2）。因此，时间复杂度为 O(log n)。</li>
+<li>递归调用会使用递归栈，因此空间复杂度也是 O(log n)。这是因为递归栈的深度取决于递归调用的次数，而每次调用时，问题规模都缩小一半。</li>
+</ul>
+<p>总体而言，这段代码采用了分治和递归的思想，有效地降低了计算复杂度，使得计算 x 的整数次幂的时间和空间复杂度都是 O(log n)。</p>
+<h2 id="3-Solution-Iteration"><a href="#3-Solution-Iteration" class="headerlink" title="3 Solution: Iteration"></a><span class="label label-success">3 Solution: Iteration</span></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">double</span> <span class="hljs-title function_">myPow</span><span class="hljs-params">(<span class="hljs-type">double</span> x, <span class="hljs-type">int</span> n)</span> &#123;<br>        <span class="hljs-type">double</span> <span class="hljs-variable">ans</span> <span class="hljs-operator">=</span> <span class="hljs-number">1.0</span>;<br><br>        <span class="hljs-comment">// 使用 long 类型来处理 Integer.MIN_VALUE 的情况，因为 -Integer.MIN_VALUE 会溢出</span><br>        <span class="hljs-type">long</span> <span class="hljs-variable">m</span> <span class="hljs-operator">=</span> n;<br><br>        <span class="hljs-comment">// 统一转化为正数次方</span><br>        <span class="hljs-keyword">if</span> (m &lt; <span class="hljs-number">0</span>) &#123;<br>            x = <span class="hljs-number">1</span> / x;<br>            m = -m;<br>        &#125;<br><br>        <span class="hljs-comment">// 每轮循环处理一位</span><br>        <span class="hljs-keyword">while</span> (m &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">if</span> ((m &amp; <span class="hljs-number">1</span>) == <span class="hljs-number">1</span>) &#123; <span class="hljs-comment">// 使用位运算检查奇偶性</span><br>                ans *= x;<br>            &#125;<br><br>            m = m &gt;&gt; <span class="hljs-number">1</span>;<br>            x *= x;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> ans;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>下面以计算 <code>x^21</code> 为例进行解释：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs maxima"><span class="hljs-number">21</span> = <span class="hljs-number">0b10101</span><br><br>每个位置对应的权重：<br> <span class="hljs-number">1</span>		 <span class="hljs-number">0</span>		 <span class="hljs-number">1</span>		 <span class="hljs-number">0</span>		<span class="hljs-number">1</span><br>x^<span class="hljs-number">16</span>	x^<span class="hljs-number">8</span>		x^<span class="hljs-number">4</span>		x^<span class="hljs-number">2</span>		x<br><br>x^<span class="hljs-number">21</span> = x * x^<span class="hljs-number">4</span> * x^<span class="hljs-number">16</span><br><br>在每轮循环中，处理一位，如果当前位是<span class="hljs-number">1</span>，则将对应的权乘到ans中，同时每处理一位就更新权重<br></code></pre></td></tr></table></figure>
+<h2 id="4-引用"><a href="#4-引用" class="headerlink" title="4 引用"></a><span class="label label-warning">4 引用</span></h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/powx-n/description/">LeetCode 50. Pow(x, n)</a>
 <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section>
                 
               </div>
@@ -324,13 +325,20 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Computational-Model/" class="category-chain-item">Computational Model</a>
+  <a href="/categories/Algorithm/" class="category-chain-item">Algorithm</a>
   
   
     <span>></span>
     
-  <a href="/categories/Computational-Model/State-Machine/" class="category-chain-item">State Machine</a>
+  <a href="/categories/Algorithm/Problem-Solving-Techniques/" class="category-chain-item">Problem Solving Techniques</a>
   
+  
+    <span>></span>
+    
+  <a href="/categories/Algorithm/Problem-Solving-Techniques/Bit-Manipulation/" class="category-chain-item">Bit Manipulation</a>
+  
+  
+
   
 
   
@@ -350,7 +358,9 @@
       
         <a href="/tags/LeetCode/">#LeetCode</a>
       
-        <a href="/tags/State-Machine/">#State Machine</a>
+        <a href="/tags/Java/">#Java</a>
+      
+        <a href="/tags/Bit-Manipulation/">#Bit Manipulation</a>
       
     </div>
   
@@ -362,8 +372,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>LeetCode 8 字符串转换整数 (atoi)</div>
-      <div>https://hwollin.github.io/2024/02/07/LeetCode_8/</div>
+      <div>LeetCode 50 Pow(x, n)</div>
+      <div>https://hwollin.github.io/2024/02/13/LeetCode_50/</div>
     </div>
     <div class="license-meta">
       
@@ -375,7 +385,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年2月7日</div>
+          <div>2024年2月13日</div>
         </div>
       
       
@@ -405,9 +415,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/02/13/LeetCode_50/" title="LeetCode 50 Pow(x, n)">
+                      <a href="/2024/02/13/LeetCode_15/" title="LeetCode 15 三数之和">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">LeetCode 50 Pow(x, n)</span>
+                        <span class="hidden-mobile">LeetCode 15 三数之和</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -415,8 +425,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/02/07/LeetCode_5/" title="LeetCode 5 最长回文子串">
-                        <span class="hidden-mobile">LeetCode 5 最长回文子串</span>
+                      <a href="/2024/02/07/LeetCode_8/" title="LeetCode 8 字符串转换整数 (atoi)">
+                        <span class="hidden-mobile">LeetCode 8 字符串转换整数 (atoi)</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
