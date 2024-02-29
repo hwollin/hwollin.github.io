@@ -47,8 +47,10 @@
 <meta property="og:image" content="https://hwollin.github.io/2024/02/27/inorder/morris7.png">
 <meta property="og:image" content="https://hwollin.github.io/2024/02/27/inorder/morris8.png">
 <meta property="og:image" content="https://hwollin.github.io/2024/02/27/inorder/morris9.png">
+<meta property="og:image" content="https://hwollin.github.io/2024/02/27/inorder/morris_time_complexity.png">
+<meta property="og:image" content="https://hwollin.github.io/2024/02/27/inorder/morris_explain.png">
 <meta property="article:published_time" content="2024-02-27T09:34:42.000Z">
-<meta property="article:modified_time" content="2024-02-28T11:18:29.554Z">
+<meta property="article:modified_time" content="2024-02-29T12:17:29.282Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="LeetCode">
@@ -417,7 +419,7 @@
 <h3 id="4-2-代码实现"><a href="#4-2-代码实现" class="headerlink" title="4.2 代码实现"></a><span class="label label-danger">4.2 代码实现</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">inorderTraversal</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>    List&lt;Integer&gt; result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-type">TreeNode</span> <span class="hljs-variable">current</span> <span class="hljs-operator">=</span> root;<br>  <br>    <span class="hljs-keyword">while</span> (current != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">if</span> (current.left == <span class="hljs-literal">null</span>) &#123;<br>            result.add(current.val);<br>            current = current.right; <span class="hljs-comment">// 移至右子树</span><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">// 找到前驱节点</span><br>            <span class="hljs-type">TreeNode</span> <span class="hljs-variable">pre</span> <span class="hljs-operator">=</span> current.left;<br>            <span class="hljs-keyword">while</span> (pre.right != <span class="hljs-literal">null</span> &amp;&amp; pre.right != current) &#123;<br>                pre = pre.right;<br>            &#125;<br><br>            <span class="hljs-keyword">if</span> (pre.right == <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-comment">// 建立临时路径</span><br>                pre.right = current;<br>                current = current.left;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-comment">// 恢复树的原状，并访问当前节点</span><br>                pre.right = <span class="hljs-literal">null</span>;<br>                result.add(current.val);<br>                current = current.right;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h3 id="4-3-过程分析"><a href="#4-3-过程分析" class="headerlink" title="4.3 过程分析"></a><span class="label label-danger">4.3 过程分析</span></h3><p>同样以上面的树为例，遍历过程如下：</p>
-<p><span class="label label-danger">current</span> 指向 <code>1</code> , <code>1</code> 存在左子树，找到 <code>1</code> 的 前驱节点<span class="label label-success">pre</span>，将 <span class="label label-success">pre</span> 的右儿子指向 <code>1</code> (建立临时链接)</p>
+<p><span class="label label-danger">current</span> 指向 <code>1</code> , <code>1</code> 存在左子树，找到 <code>1</code> 的 前驱节点 <span class="label label-success">pre</span> ，将 <span class="label label-success">pre</span> 的右儿子指向 <code>1</code> (建立临时链接)</p>
 <img src="morris0.png" srcset="/img/loading.gif" lazyload alt="morris0" width="50%" height="50%">
 
 <p>更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.left</span> ,  <span class="label label-danger">current</span> 指向 <code>2</code> ,  <code>2</code> 存在左子树，找到 <code>2</code> 的 前驱节点<span class="label label-success">pre</span>，将 <span class="label label-success">pre</span> 的右儿子指向 <code>2</code> (建立临时链接)</p>
@@ -426,22 +428,22 @@
 <p>更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.left</span>,  <span class="label label-danger">current</span> 指向 <code>4</code> ，<code>4</code> 没有左儿子，将 <code>4</code> 加入到结果列表中，将 <span class="label label-danger">current</span> 指向 <code>4</code> 的右儿子</p>
 <img src="morris2.png" srcset="/img/loading.gif" lazyload> 
 
-<p><span class="label label-danger">current</span> 指向 <code>7</code> , <code>7</code> 没有左儿子，将 <code>7</code> 加入到结果列表，将 <span class="label label-danger">current</span> 指向 <code>7</code> 的右儿子（从前面可知，<code>7</code> 是 <code>2</code> 的前序节点，在这里 <code>7</code> 被遍历，下一个要被遍历的便是 <code>2</code>）</p>
+<p><span class="label label-danger">current</span> 指向 <code>7</code> , <code>7</code> 没有左儿子，将 <code>7</code> 加入到结果列表，将 <span class="label label-danger">current</span> 指向 <code>7</code> 的右儿子（从前面可知，<code>7</code> 是 <code>2</code> 的前驱节点，在这里 <code>7</code> 被遍历，下一个要被遍历的便是 <code>2</code>）</p>
 <img src="morris3.png" srcset="/img/loading.gif" lazyload alt="morris3" width="50%" height="50%">
 
-<p> <span class="label label-danger">current</span> 指向 <code>2</code> ,  <code>2</code> 存在左子树，找到 <code>2</code> 的 前驱节点<span class="label label-success">pre</span>，<span class="label label-success">pre.right</span> 不为 <code>null</code> (或者说指向了 <span class="label label-danger">current</span> )，恢复树的原状（删除临时链接），遍历当前节点（因为此时 <code>2</code> 左子树已经遍历完成），并更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.right</span></p>
+<p> <span class="label label-danger">current</span> 指向 <code>2</code> ,  <code>2</code> 存在左子树，找到 <code>2</code> 的 前驱节点 <span class="label label-success">pre</span> ，<span class="label label-success">pre.right</span> 不为 <code>null</code> (或者说指向了 <span class="label label-danger">current</span> )，恢复树的原状（删除临时链接），遍历当前节点（因为此时 <code>2</code> 左子树已经遍历完成），并更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.right</span></p>
 <img src="morris4.png" srcset="/img/loading.gif" lazyload>
 
-<p><span class="label label-danger">current</span> 指向 <code>1</code> , <code>1</code> 存在左子树，找到 <code>1</code> 的 前驱节点<span class="label label-success">pre</span>，<span class="label label-success">pre.right</span> 不为 <code>null</code> (或者说指向了 <span class="label label-danger">current</span> )，恢复树的原状（删除临时链接），遍历当前节点（因为此时 <code>1</code> 左子树已经遍历完成），并更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.right</span></p>
+<p><span class="label label-danger">current</span> 指向 <code>1</code> , <code>1</code> 存在左子树，找到 <code>1</code> 的 前驱节点 <span class="label label-success">pre</span> ，<span class="label label-success">pre.right</span> 不为 <code>null</code> (或者说指向了 <span class="label label-danger">current</span> )，恢复树的原状（删除临时链接），遍历当前节点（因为此时 <code>1</code> 左子树已经遍历完成），并更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.right</span></p>
 <img src="morris5.png" srcset="/img/loading.gif" lazyload>
 
-<p><span class="label label-danger">current</span> 指向 <code>3</code> , <code>3</code> 存在左子树，找到 <code>3</code> 的 前驱节点<span class="label label-success">pre</span>，将 <span class="label label-success">pre</span> 的右儿子指向 <code>3</code> (建立临时链接)</p>
+<p><span class="label label-danger">current</span> 指向 <code>3</code> , <code>3</code> 存在左子树，找到 <code>3</code> 的 前驱节点 <span class="label label-success">pre</span> ，将 <span class="label label-success">pre</span> 的右儿子指向 <code>3</code> (建立临时链接)</p>
 <img src="morris6.png" srcset="/img/loading.gif" lazyload alt="morris6" width="50%" height="50%">
 
 <p>更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.left</span>， <span class="label label-danger">current</span> 指向 <code>5</code> ，<code>5</code> 没有左儿子，将 <code>5</code> 加入到结果列表中，将 <span class="label label-danger">current</span> 指向 <code>5</code> 的右儿子</p>
 <img src="morris7.png" srcset="/img/loading.gif" lazyload>
 
-<p><span class="label label-danger">current</span> 指向 <code>3</code> , <code>3</code> 存在左子树，找到 <code>3</code> 的 前驱节点<span class="label label-success">pre</span>，<span class="label label-success">pre.right</span> 不为 <code>null</code> (或者说指向了 <span class="label label-danger">current</span> )，恢复树的原状（删除临时链接），遍历当前节点（因为此时 <code>3</code> 左子树已经遍历完成），并更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.right</span></p>
+<p><span class="label label-danger">current</span> 指向 <code>3</code> , <code>3</code> 存在左子树，找到 <code>3</code> 的 前驱节点 <span class="label label-success">pre</span> ，<span class="label label-success">pre.right</span> 不为 <code>null</code> (或者说指向了 <span class="label label-danger">current</span> )，恢复树的原状（删除临时链接），遍历当前节点（因为此时 <code>3</code> 左子树已经遍历完成），并更新 <span class="label label-danger">current</span> 为 <span class="label label-danger">current.right</span></p>
 <img src="morris8.png" srcset="/img/loading.gif" lazyload>
 
 <p><span class="label label-danger">current</span> 指向 <code>6</code> , <code>6</code> 没有左儿子，将 <code>6</code> 加入到结果列表，将 <span class="label label-danger">current</span> 指向 <code>6</code> 的右儿子 <code>null</code> , 循环结束。</p>
@@ -449,15 +451,16 @@
 
 </p>
 
-<p><strong>思考</strong></p>
+<p><span class="label label-danger"><strong>思考</strong></span></p>
 <ol>
 <li><span class="label label-danger">current</span> 节点的遍历过程与上面的 Stack-based Iteration 方案相同吗？</li>
 </ol>
 <p class="note note-info">相同，都是从根节点开始，沿着左子节点一直往下走，直到到达最左侧的节点，当到达最左侧节点后，转向访问该节点的右子树。唯一区别是 Stack-based Iteration 方案中会遍历 null 节点，而该方案不会。<br><br>
-  在不考虑null节点的情况下，current的遍历路径是：[<span class="label label-warning">1</span>, <span class="label label-warning">2</span>, <span class="label label-warning">4</span>, <span class="label label-success">7</span>, <span class="label label-primary">2</span>, <span class="label label-primary">1</span>, <span class="label label-success">3</span>, <span class="label label-warning">5</span>, <span class="label label-primary">3</span>, <span class="label label-success">6</span>]<br>
+  在不考虑null节点的情况下，current的遍历路径是：[<span class="label label-warning">1</span>, <span class="label label-warning">2</span>, <span class="label label-warning" style="text-decoration: underline;">4</span>, <span class="label label-success" style="text-decoration: underline;">7</span>, <span class="label label-primary" style="text-decoration: underline;">2</span>, <span class="label label-primary" style="text-decoration: underline;">1</span>, <span class="label label-success">3</span>, <span class="label label-warning" style="text-decoration: underline;">5</span>, <span class="label label-primary" style="text-decoration: underline;">3</span>, <span class="label label-success" style="text-decoration: underline;">6</span>]<br>
   &bull;<span class="label label-warning"> </span>表示一路向左到达的节点。<br>
   &bull;<span class="label label-success"> </span>表示转向右子树到达的节点。<br>
-  &bull;<span class="label label-primary"> </span>表示通过回溯到达的节点。
+  &bull;<span class="label label-primary"> </span>表示通过回溯到达的节点。<br>
+  &bull; <span style="text-decoration: underline;">&nbsp;&nbsp;</span> 表示加入结果列表的节点。
 </p>
 
 <ol start="2">
@@ -471,7 +474,32 @@
     比如当节点 7 被遍历后，我们是通过先前创建的临时链接回溯到节点 2 继续遍历的。
 </p>
 
-<h3 id="4-4-时间复杂度分析"><a href="#4-4-时间复杂度分析" class="headerlink" title="4.4 时间复杂度分析"></a><span class="label label-danger">4.4 时间复杂度分析</span></h3><p>每个节点最多被访问两次（被 <span class="label label-danger">current</span> 指向两次）。首次访问是为了定位到最左侧的节点，第二次访问是回溯时向右遍历。尽管存在嵌套的循环用于寻找前驱节点，但每个节点的右指针最多只被修改两次（一次指向当前节点，一次恢复为null），因此整体算法的运行时间为线性时间，即O(n)，其中n是树中节点的数量。</p>
+<h3 id="4-4-时间复杂度分析"><a href="#4-4-时间复杂度分析" class="headerlink" title="4.4 时间复杂度分析"></a><span class="label label-danger">4.4 时间复杂度分析</span></h3><p>在上述代码中，时间复杂度的主要部分来源于两个核心操作：遍历节点（通过 <span class="label label-danger">current</span> ）和寻找所有节点的前驱节点（ <span class="label label-success">pre</span> ）。</p>
+<ol>
+<li><p><strong>对 <span class="label label-danger">current</span> 的操作时间复杂度</strong>：</p>
+<p>每个节点通过 <span class="label label-danger">current</span> 最多被访问两次，一次是向下访问到最左侧节点，另一次是通过建立的临时链接回溯。因此，对 <span class="label label-danger">current</span> 的操作的时间复杂度为O(n)。</p>
+<blockquote>
+<p>需要回溯的节点会被访问两次，例如节点 <code>2</code> ，不需要回溯节点仅被访问一次，例如节点 <code>4</code></p>
+</blockquote>
+</li>
+<li><p><strong>寻找所有节点的前驱节点 <span class="label label-success">pre</span> </strong>：</p>
+<p>寻找单个节点的前驱节点时间复杂度是和树的高度相关的，为O(log n)，所以直觉上整个算法过程中对所有节点的前驱节点的查找整体时间复杂度为O(n * log n)，但是实际上这个过程的时间复杂度也为O(n)。</p>
+<p>以下面这棵树为例：</p>
+<img src="morris_time_complexity.png" srcset="/img/loading.gif" lazyload alt="morris_time_complexity" width="50%" height="50%">
+
+<p>在一棵二叉树中，任一节点的前驱节点可以这样查找：从当前节点出发，先向左走一步，随后一直向右走直到尽头，所到达的节点便是其前驱节点。</p>
+<p>以节点 <code>0</code> 为例，其查找过程是：先左移到节点 <code>1</code>，再持续向右行进，依次通过节点 <code>4</code>、<code>8</code>、<code>12</code>、<code>16</code>，将路径上的边进行标注（标注为0，表明是节点 <code>0</code> 的前驱节点查找路径）。对其他节点也采用同样的方法，并进行了相应的边标注。</p>
+<p>树中每条左连线恰好被遍历一次：对于任意一条连接父节点 <code>a</code> 和子节点 <code>b</code> 的左连线，只有在寻找 <code>a</code> 的前驱节点时才会通过这条连线。</p>
+<p>至于右连线，它们被遍历的次数不会超过一次：</p>
+<p>从根节点出发，沿着右子节点直线向下的路径上的右连线未被遍历，其余的右连线都恰好遍历了一次。</p>
+<img src="morris_explain.png" srcset="/img/loading.gif" lazyload>
+
+<p>鉴于含有n个节点的二叉树有n-1条边，因此该过程的时间复杂度为O(n)。</p>
+<p class="note note-danger">
+  除了根节点外，其余节点均存在父节点，且存在一条线与父节点相连，所以含有n个节点的二叉树有n-1条边。
+</p></li>
+</ol>
+<p>因此，整个算法的时间复杂度为O(n)，其中n是树中节点的总数。</p>
 <h2 id="5-三种方案优缺点分析"><a href="#5-三种方案优缺点分析" class="headerlink" title="5 三种方案优缺点分析"></a><span class="label label-info">5 三种方案优缺点分析</span></h2><p>这三种二叉树中序遍历的方案各有其优缺点，主要体现在空间复杂度、时间复杂度以及算法的复杂性上。下面是对这三种方案的优缺点对比：</p>
 <h3 id="方案一：递归（Recursion）"><a href="#方案一：递归（Recursion）" class="headerlink" title="方案一：递归（Recursion）"></a><span class="label label-info">方案一：递归（Recursion）</span></h3><p><strong>优点</strong>:</p>
 <ul>
