@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://hwollin.github.io/2024/04/11/partition/equal.png">
 <meta property="og:image" content="https://hwollin.github.io/2024/04/11/partition/big.png">
 <meta property="article:published_time" content="2024-04-11T10:10:30.000Z">
-<meta property="article:modified_time" content="2024-04-11T12:03:33.420Z">
+<meta property="article:modified_time" content="2024-04-11T12:10:16.121Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="LeetCode">
@@ -263,7 +263,7 @@
                 <h2 id="1-相关问题描述"><a href="#1-相关问题描述" class="headerlink" title="1 相关问题描述"></a><span class="label label-info">1 相关问题描述</span></h2><h3 id="1-1-荷兰国旗问题-1"><a href="#1-1-荷兰国旗问题-1" class="headerlink" title="1.1 荷兰国旗问题[1]"></a><span class="label label-info">1.1 荷兰国旗问题<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="[LeetCode 75. 颜色分类](https://leetcode.cn/problems/sort-colors/description/)">[1]</span></a></sup></span></h3><p>荷兰国旗问题是一个经典的计算机科学问题，其来源于荷兰国旗的三色（红、白、蓝）设计，要求通过一次遍历将包含三种颜色的数组按颜色进行排序。数组中的每个元素代表一种颜色，分别用 0、1 和 2 表示红色、白色和蓝色。目标是将这个数组重新排列，使得所有的 0 都位于数组的前面，所有的 1 都位于中间，所有的 2 都位于数组的后面。</p>
 <h3 id="1-2-三路快速排序"><a href="#1-2-三路快速排序" class="headerlink" title="1.2 三路快速排序"></a><span class="label label-info">1.2 三路快速排序</span></h3><p>三路快速排序（3-way QuickSort）是快速排序算法的一种变体，特别适合处理有大量重复元素的数组。在标准快速排序中，我们选择一个元素作为基准（pivot），然后将数组分为两部分：小于基准的元素和大于基准的元素。而在三路快速排序中，数组被分为三个部分：小于基准的元素、等于基准的元素和大于基准的元素。这样，每次递归时，等于基准的元素已经被正确排序，因此下一次递归只需要处理小于和大于基准的两个子数组。</p>
 <p>三路快速排序的主要优点是它能够减少对重复元素的无谓比较，从而提高排序的效率。特别是当数组中存在大量重复元素时，与传统的快速排序相比，三路快速排序可以显著减少递归的深度，提高排序速度。</p>
-<h3 id="1-3-三路快速选择"><a href="#1-3-三路快速选择" class="headerlink" title="1.3 三路快速选择"></a><span class="label label-info">1.3 三路快速选择</span></h3><p>快速选择算法<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="[维基百科：快速选择算法](https://en.wikipedia.org/wiki/Quickselect)">[2]</span></a></sup>是一种高效地找到数组中第 <em>k</em> 小或第 <em>k</em> 大元素的方法，它是快速排序的一个变种。它通过选择一个基准元素 <em>pivot</em> ，把数组分为小于和大于基准的两部分来工作。与快速排序不同，快速选择只对含有第 <em>k</em> 小元素的子数组进行递归，减少了计算量。</p>
+<h3 id="1-3-三路快速选择"><a href="#1-3-三路快速选择" class="headerlink" title="1.3 三路快速选择"></a><span class="label label-info">1.3 三路快速选择</span></h3><p>快速选择算法<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="[维基百科：快速选择算法](https://en.wikipedia.org/wiki/Quickselect)">[2]</span></a></sup>是一种高效地找到数组中第 <em>k</em> 小或第 <em>k</em> 大元素的方法，它是快速排序的一个变种。它通过选择一个基准元素（pivot），把数组分为小于和大于基准的两部分来工作。与快速排序不同，快速选择只对含有第 <em>k</em> 小元素的子数组进行递归，减少了计算量。</p>
 <p>三路快速选择是快速选择的扩展，适用于含有大量重复元素的数组。它按小于、等于、大于基准元素的三部分来分数组，并能在寻找第 <em>k</em> 小或大元素时跳过重复项。这种方法有效减少了重复元素的比较次数，提升了效率。</p>
 <p>三路快速选择在处理重复元素多的数组时更加高效，减少了不必要的比较和递归深度，提高了性能。</p>
 <p>例如 LeetCode 215. 数组中的第K个最大元素<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="[LeetCode 215. 数组中的第K个最大元素](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)">[3]</span></a></sup> 中，有一个测试用例为:</p>
