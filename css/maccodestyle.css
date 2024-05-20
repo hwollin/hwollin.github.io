@@ -15,3 +15,9 @@
   position: absolute;
   width: 12px;
 }
+.markdown-body p > img,
+.markdown-body p > a > img,
+.markdown-body figure > img,
+.markdown-body figure > a > img {
+  box-shadow: none !important;
+}
