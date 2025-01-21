@@ -24,7 +24,7 @@
 <meta property="og:description" content="本文介绍了如何在 Mac 和 Ubuntu 虚拟机中为命令行 Git 配置代理，以解决在使用 ClashX 科学上网时命令行 Git 无法连接 GitHub 的问题。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-01-21T04:10:30.000Z">
-<meta property="article:modified_time" content="2025-01-21T04:30:58.514Z">
+<meta property="article:modified_time" content="2025-01-21T07:45:04.627Z">
 <meta property="article:author" content="Wei Han">
 <meta property="article:tag" content="Git">
 <meta property="article:tag" content="ClashX">
@@ -263,19 +263,19 @@
 <p class="note note-info"> For command line tools like curl etc. "system proxy settings" is exactly what you have set in your second example - that is, the variables `$http_proxy` etc. Does the GUI tool you use for setting "system proxy settings" set these variables for terminal sessions? If not, then you have the answer why the settings are not used. Simply your GUI proxy setting application is incompatible with command line tools.</p>
 
 <p>命令行 Git 需要配置环境变量 <code>$http_proxy</code> 和 <code>$https_proxy</code>。</p>
-<p>我的 ClashX 在 127.0.0.1:7890 端口开启了 HTTP、HTTPS 和 SOCKS5 代理服务。</p>
+<p>我的 ClashX 在 <code>127.0.0.1:7890</code> 端口开启了 HTTP、HTTPS 和 SOCKS5 代理服务。</p>
 <p>通过以下命令为 Git 配置代理：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">git config --global http.proxy http://127.0.0.1:7890<br>git config --global https.proxy http://127.0.0.1:7890<br></code></pre></td></tr></table></figure>
 
 <p>配置完成后，再次执行 <code>git fetch</code>，可以看到 Git 现在走了代理：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh">Hw-MacBook-Pro:images hw$ GIT_TRACE=1 GIT_TRACE_PACKET=1 GIT_TRACE_CURL=1 git fetch<br>13:06:29.140435 exec-cmd.c:139          trace: resolved executable path from Darwin stack: /Applications/Xcode.app/Contents/Developer/usr/bin/git<br>...<br>13:06:29.211802 http.c:756              == Info: Connected to 127.0.0.1 (127.0.0.1) port 7890<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">Hw-MacBook-Pro:images hw$ GIT_TRACE=1 GIT_TRACE_PACKET=1 GIT_TRACE_CURL=1 git fetch<br>13:06:29.140435 exec-cmd.c:139          trace: resolved executable path from Darwin stack: /Applications/Xcode.app/Contents/Developer/usr/bin/git<br>...<br>13:06:29.211802 http.c:756              == Info: Connected to 127.0.0.1 (127.0.0.1) port 7890<br>...<br>13:06:29.211903 http.c:756              == Info: Establish HTTP proxy tunnel to github.com:443<br></code></pre></td></tr></table></figure>
 
 <h2 id="3-在-Ubuntu-虚拟机上的配置"><a href="#3-在-Ubuntu-虚拟机上的配置" class="headerlink" title="3 在 Ubuntu 虚拟机上的配置"></a><span class="label label-warning">3 在 Ubuntu 虚拟机上的配置</span></h2><p>虚拟机与宿主机通过桥接模式连接，虚拟机的 IP 地址为 <code>10.211.55.18</code>，宿主机的 IP 为 <code>10.211.55.2</code>。为虚拟机上的 Git 配置代理：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">git config --global http.proxy http://10.211.55.2:7890<br>git config --global https.proxy http://10.211.55.2:7890<br></code></pre></td></tr></table></figure>
 
 <p>同时，确保 ClashX 设置为允许局域网连接。</p>
 <p>在虚拟机中执行 Git 命令并确认代理设置：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh">hw@hw-Parallels-Virtual-Platform:~/images$ GIT_TRACE=1 GIT_TRACE_PACKET=1 GIT_TRACE_CURL=1 git fetch<br>13:07:29.255333 git.c:463               trace: built-in: git fetch<br>...<br>13:07:29.281179 http.c:845              == Info: Establish HTTP proxy tunnel to github.com:443<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">hw@hw-Parallels-Virtual-Platform:~/images$ GIT_TRACE=1 GIT_TRACE_PACKET=1 GIT_TRACE_CURL=1 git fetch<br>13:07:29.255333 git.c:463               trace: built-in: git fetch<br>...<br>13:07:29.281054 http.c:845              == Info: Connected to 10.211.55.2 (10.211.55.2) port 7890<br>...<br>13:07:29.281179 http.c:845              == Info: Establish HTTP proxy tunnel to github.com:443<br></code></pre></td></tr></table></figure>
 
 <h2 id="4-参考文章"><a href="#4-参考文章" class="headerlink" title="4 参考文章"></a><span class="label label-info">4 参考文章</span></h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/655764/why-git-curl-and-such-tools-cant-use-system-network-proxy">Why git, curl and such tools can’t use system network proxy?</a>
 <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section>
